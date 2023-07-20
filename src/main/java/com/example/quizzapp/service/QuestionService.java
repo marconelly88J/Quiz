@@ -23,12 +23,17 @@ public class QuestionService {
 
         public ResponseEntity<List<Question>> getAllQuestions() {
                 try {
-                        return new ResponseEntity<>(questionDAO.findAll(), HttpStatus.OK) ;
-                }catch (Exception e) {
-                        e.printStackTrace();
-                }
+                        List<Question> questions = questionDAO.findAll();
 
-                return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST) ;
+                        if (questions.isEmpty()) {
+                                return new ResponseEntity<>(HttpStatus.NOT_FOUND); // No questions found, return 404
+                        }
+
+                        return new ResponseEntity<>(questions, HttpStatus.OK); // Return the list of questions
+                } catch (Exception e) {
+                        e.printStackTrace();
+                        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // Server error, return 500
+                }
         }
 
         public  ResponseEntity<List<Question>> getQuestionsByCategory(String category) {
